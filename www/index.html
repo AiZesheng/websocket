@@ -59,7 +59,7 @@
         });
         socket.on("showMes", function(data, user){
             var date = new Date().toTimeString().substring(0, 8);
-            // 自己看自己的消息为红色,看别人消息为黑色
+            // 看自己的消息为红色,看别人消息为黑色
             if(user == nowUser){
                 oBox.innerHTML += "<div style='color: #f00;'>" + user + "(" + date + "): " + data + "</div>";
             }else{
