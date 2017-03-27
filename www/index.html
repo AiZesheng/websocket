@@ -26,16 +26,17 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    // socket.emit函数用来定义方法 socket.on函数用来实现方法
     (function(){
         var socket = io.connect();
         var oSubmit = document.getElementById("submit");
         var oNickname = document.getElementById("nickname");
+        var nowUser = "";
         oSubmit.onclick = function(){
             var re = /\s/;
             if(re.exec(oNickname.value)){
                 alert("昵称中请不要出现空格");
             }else{
+                nowUser = oNickname.value;
                 socket.emit("login", oNickname.value);
             }
         };
@@ -58,7 +59,12 @@
         });
         socket.on("showMes", function(data, user){
             var date = new Date().toTimeString().substring(0, 8);
-            oBox.innerHTML += "<div>" + user + "(" + date + "): " + data + "</div>";
+            // 自己看自己的消息为红色,看别人消息为黑色
+            if(user == nowUser){
+                oBox.innerHTML += "<div style='color: #f00;'>" + user + "(" + date + "): " + data + "</div>";
+            }else{
+                oBox.innerHTML += "<div>" + user + "(" + date + "): " + data + "</div>";
+            }
         });
         var oMessage = document.getElementById("message");
         var oSend = document.getElementById("send");
@@ -66,6 +72,17 @@
             if(oMessage.value.trim().length != 0){
                 socket.emit("send", oMessage.value);
                 oMessage.value = "";
+            }
+        };
+        // 给输入框绑个回车
+        oNickname.onkeydown = function(e){
+            if(e.keyCode == 13){
+                oSubmit.onclick();
+            }
+        };
+        oMessage.onkeydown = function(e){
+            if(e.keyCode == 13){
+                oSend.onclick();
             }
         };
     })();
